@@ -7,6 +7,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ListComponent } from './pages/list/list.component';
+import {ActivityIndicator} from "./components/activity-indicator.component";
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
@@ -23,7 +24,8 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     LoginComponent,
-    ListComponent
+    ListComponent,
+    ActivityIndicator
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   imports: [
