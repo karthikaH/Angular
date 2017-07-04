@@ -14,10 +14,22 @@
     </button>
   </div>
 
-  <grocery-list
+  <!-- <grocery-list
     [groceries]="groceryList"
     [showDeleted]="isShowingRecent"
     (loaded)="hideLoadingIndicator()"></grocery-list>
-</div>
+</div> -->
+<ul>
+  <li *ngFor="let grocery of groceryList ">
+    <img
+      [src]="imageSource(grocery)"
+      (click)="toggleDone(grocery)">
+    <span
+      [class.done]="grocery.done && !grocery.deleted">{{ grocery.name}}</span>
+    <button
+      *ngIf="!grocery.deleted"
+      (click)="delete(grocery)">&times;</button>
+  </li>
+</ul>
 
 <activity-indicator [isLoading]="isLoading"></activity-indicator>

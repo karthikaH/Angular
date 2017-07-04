@@ -14,6 +14,7 @@ export class GroceryStore{
 
     constructor(private http: Http) {}
 
+// grocery-list service functions
     load() {
       let headers = this.getHeaders();
       headers.append("X-Everlive-Sort", JSON.stringify({ ModifiedAt: -1 }));
@@ -23,17 +24,11 @@ export class GroceryStore{
       })
       .map(res => res.json())
       .map(data => {
+        let groceryList = [];
         data.Result.forEach((grocery) => {
-          this.allItems.push(
-            new Grocery(
-              grocery.Id,
-              grocery.Name,
-              grocery.Done || false,
-              grocery.Deleted || false
-            )
-          );
-          this.publishUpdates();
+          groceryList.push(new Grocery(grocery.Id, grocery.Name,false,false));
         });
+        return groceryList;
       })
       .catch(this.handleErrors);
     }
@@ -46,8 +41,11 @@ export class GroceryStore{
       )
       .map(res => res.json())
       .map(data => {
+        console.log(data);
         this.allItems.unshift(new Grocery(data.Result.Id, name, false, false));
         this.publishUpdates();
+        console.log(this.allItems);
+        return this.allItems;
       })
       .catch(this.handleErrors);
     }
@@ -103,6 +101,8 @@ export class GroceryStore{
             grocery.done = false;
           }
         });
+        console.log("inside restore");
+        console.log(this.allItems)
         this.publishUpdates();
       })
       .catch(this.handleErrors);
@@ -123,6 +123,12 @@ export class GroceryStore{
         { headers: this.getHeaders() }
       )
       .map(res => res.json())
+      .map(data => {
+        item.deleted = true;
+        item.done = false;
+        console.log(data);
+        alert("The Grocery Item has been successfully deleted")
+        })
       .catch(this.handleErrors);
     }
     getHeaders() {
@@ -134,6 +140,7 @@ export class GroceryStore{
 
     publishUpdates() {
       this.items.next([...this.allItems]);
+      console.log(this.items);
     }
 
     handleErrors(error: Response) {

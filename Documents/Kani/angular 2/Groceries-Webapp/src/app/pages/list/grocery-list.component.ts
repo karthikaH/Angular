@@ -35,18 +35,23 @@ export class ItemStatusPipe implements PipeTransform {
       </li>
     </ul>
   `,
-  styleUrls: ["./app/pages/list/grocery-list.css"],
+  styleUrls: ["./grocery-list.css"],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GroceryList {
   @Input() showDeleted: boolean;
   @Output() loaded = new EventEmitter();
+  items: Array<Grocery>;
 
   constructor(private store: GroceryStore) {}
 
   ngOnInit() {
     this.store.load()
-      .subscribe(() => this.loaded.emit("loaded"));
+      .subscribe(groceryObject => {
+        this.items.unshift(groceryObject);
+        this.loaded.emit("loaded");
+        console.log(this.items);
+      });
   }
 
   imageSource(grocery) {

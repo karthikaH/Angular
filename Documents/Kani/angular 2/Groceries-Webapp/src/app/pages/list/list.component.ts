@@ -10,12 +10,14 @@ import {GroceryList} from "./grocery-list.component";
 @Component({
   selector: "list",
   templateUrl: "./list.html",
-  styleUrls: ["./list.css"],
+  styleUrls: ["./list.css","./grocery-list.css"],
   providers: [GroceryStore]
 })
 
 export class ListComponent implements OnInit{
+  groceryList: Array<Grocery> = [];
   grocery: string = "";
+
 
   isLoading = false;
   isShowingRecent = false;
@@ -29,6 +31,12 @@ export class ListComponent implements OnInit{
     }
 
     this.isLoading = true;
+    this.store.load()
+      .subscribe(groceryObject => {
+        this.groceryList= groceryObject;
+        console.log(this.groceryList);
+        this.hideLoadingIndicator();
+      });
   }
 
   hideLoadingIndicator() {
@@ -40,10 +48,13 @@ export class ListComponent implements OnInit{
       alert("Enter a grocery item");
       return;
     }
-
+    this.isLoading = true;
     this.store.add(this.grocery)
-      .subscribe(() => {
+      .subscribe(groceryObject => {
+        console.log(groceryObject);
+        this.groceryList = groceryObject.concat(this.groceryList);
         this.grocery = "";
+        this.hideLoadingIndicator();
       }, () => {
         alert("An error occurred while adding a grocery to your list.");
       });
@@ -59,5 +70,37 @@ export class ListComponent implements OnInit{
     } else {
       this.isShowingRecent = true;
     }
+  }
+
+  //grocery-list component functions
+
+  imageSource(grocery) {
+    if (grocery.deleted) {
+      return grocery.done ? "../app/assets/images/selected.png" : "./app/assets/images/nonselected.png"
+    }
+    return grocery.done ? "./app/assets/images/checked.png" : "./app/assets/images/unchecked.png";
+  }
+
+  toggleDone(grocery: Grocery) {
+    if (grocery.deleted) {
+      grocery.done = !grocery.done;
+      return;
+    }
+    this.store.toggleDoneFlag(grocery)
+      .subscribe(
+        () => {},
+        () => { alert("An error occurred managing your grocery list") }
+      );
+  }
+
+  delete(grocery: Grocery) {
+    this.isLoading = true;
+    this.store.deleteForever(grocery)
+      .subscribe(
+        () => {
+          this.hideLoadingIndicator();
+        },
+        () => alert("An error occurred while deleting an item from your list.")
+      );
   }
 }

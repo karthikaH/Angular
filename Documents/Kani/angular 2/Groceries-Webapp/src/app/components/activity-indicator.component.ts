@@ -9,24 +9,7 @@ import {Component, Input} from "@angular/core";
       <span>{{ message }}</span>
     </div>
   `,
-  styles: [`
-    div {
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      padding: 0.5em;
-      background: white;
-      border: solid 1px #c8cccf;
-      border-width: 1px 0 0 1px;
-      display: flex;
-    }
-    img {
-      height: 50px;
-    }
-    span {
-      line-height: 50px;
-    }
-  `]
+  styleUrls: ["./activity-indicator.css"]
 })
 export class ActivityIndicator {
   @Input("isLoading") isLoading = false;
